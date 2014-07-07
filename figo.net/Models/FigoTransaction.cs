@@ -99,7 +99,7 @@ namespace figo {
         /// Helper type to represent the actual answer from the figo API
         /// </summary>
         [JsonObject]
-        public class TransactionsResponse {
+        internal class TransactionsResponse {
             /// <summary>
             /// List of transactions asked for
             /// </summary>

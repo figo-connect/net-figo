@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -26,9 +27,6 @@ namespace figo
             WebRequest req = (WebRequest)WebRequest.Create(API_ENDPOINT + url);
             req.Method = method;
             req.Headers["Authorization"] = "Bearer " + access_token;
-            //req.Credentials = access_token_credential;
-            //req.PreAuthenticate = true;
-            //req.Timeout = TimeoutSeconds * 1000;
 
             if (method == "POST" || method == "PUT")
                 req.ContentType = "application/json";
@@ -36,25 +34,30 @@ namespace figo
             return req;
         }
 
-        protected async Task<T> DoRequest<T>(string endpoint, string method = "GET", string body = null) {
-            string json = await DoRequest(endpoint, method, body);
-            if(json == null)
+        protected async Task<T> DoRequest<T>(string endpoint, string method = "GET", object body = null) {
+            string request_body = null;
+            if(body != null)
+                request_body = JsonConvert.SerializeObject(body);
+
+            string response_body = await DoRequest(endpoint, method, request_body);
+            if(response_body == null)
                 return default(T);
             else
-                return JsonConvert.DeserializeObject<T>(json);
+                return JsonConvert.DeserializeObject<T>(response_body);
         }
 
         protected async Task<String> DoRequest(string endpoint, string method = "GET", string body = null) {
             string result = null;
             WebRequest req = SetupRequest(method, endpoint);
 
-            /*if (body != null) {
-                byte[] bytes = encoding.GetBytes(body.ToString());
-                req.ContentLength = bytes.Length;
-                using (Stream st = req.GetRequestStream()) {
-                    st.Write(bytes, 0, bytes.Length);
+            if (body != null) {
+                req.ContentType = "application/json";
+
+                using(var request_stream = await req.GetRequestStreamAsync()) {
+                    byte[] bytes = Encoding.UTF8.GetBytes(body);
+                    request_stream.Write(bytes, 0, bytes.Length);
                 }
-            }*/
+            }
 
             try {
                 using (WebResponse resp = await req.GetResponseAsync()) {
@@ -174,7 +177,69 @@ namespace figo
 	    public async Task<FigoTransaction> getTransaction(String transactionId) {
             return await this.DoRequest<FigoTransaction>("/rest/transactions/" + transactionId);
 	    }
-	
+        #endregion
+
+        #region Account Synchronization
+        /// <summary>
+        /// Create a new synchronization task.
+        /// </summary>
+        /// <param name="state">Any kind of string that will be forwarded in the callback response message. It serves two purposes: The value is used to maintain state between this request and the callback, e.g. it might contain a session ID from your application. The value should also contain a random component, which your application checks to mitigate cross-site request forgery</param>
+        /// <param name="redirect_url">At the end of the synchronization process a response will be sent to this callback URL</param>
+        /// <returns>task token</returns>
+        public async Task<string> getSyncTaskToken(String state, String redirect_url) {
+		    SyncTokenResponse response = await this.DoRequest<SyncTokenResponse>("/rest/sync", "POST", new SyncTokenRequest { State=state, RedirectURI=redirect_url});
+		    return response.TaskToken;
+	    }
+        #endregion
+
+        #region Notifications
+        /// <summary>
+        /// All notifications registered by this client for the user
+        /// </summary>
+        /// <returns>List of Notification objects</returns>
+	    public async Task<List<FigoNotification>> getNotifications() {
+		    FigoNotification.NotificationsResponse response = await this.DoRequest<FigoNotification.NotificationsResponse>("/rest/notifications");
+		    if (response == null)
+			    return null;
+		    else
+			    return response.Notifications;
+	    }
+
+        /// <summary>
+        /// Retrieve a specific notification by ID
+        /// </summary>
+        /// <param name="notificationId">figo ID for the notification to be retrieved</param>
+        /// <returns>Notification or Null</returns>
+	    public async Task<FigoNotification> getNotification(String notificationId) {
+		    return await this.DoRequest<FigoNotification>("/rest/notifications/" + notificationId);
+	    }
+
+        /// <summary>
+        /// Register a new notification on the server for the user
+        /// </summary>
+        /// <param name="notification">Notification which should be registered</param>
+        /// <returns>created notification including its figo ID</returns>
+	    public async Task<FigoNotification> addNotification(FigoNotification notification) {
+		    return await this.DoRequest<FigoNotification>("/rest/notifications", "POST", notification);
+	    }
+
+        /// <summary>
+        /// Update a stored notification
+        /// </summary>
+        /// <param name="notification">Notification with updated values</param>
+        /// <returns>Updated notification</returns>
+	    public async Task<FigoNotification> updateNotification(FigoNotification notification) {
+		    return await this.DoRequest<FigoNotification>("/rest/notifications/" + notification.NotificationId, "PUT", notification);
+	    }
+
+        /// <summary>
+        /// Remove a stored notification from the server
+        /// </summary>
+        /// <param name="notification">Notification to be removed</param>
+	    public async Task<bool> removeNotification(FigoNotification notification) {
+		    await this.DoRequest("/rest/notifications/" + notification.NotificationId, "DELETE");
+            return true;
+	    }
         #endregion
     }
 }

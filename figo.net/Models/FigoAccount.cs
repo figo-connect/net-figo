@@ -93,7 +93,7 @@ namespace figo {
         /// Helper type to match actual response from figo API
         /// </summary>
         [JsonObject]
-        public class FigoAccountsResponse {
+        internal class FigoAccountsResponse {
             /// <summary>
             /// List of accounts asked for
             /// </summary>

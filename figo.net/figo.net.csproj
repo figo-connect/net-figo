@@ -35,10 +35,12 @@
   <ItemGroup>
     <Compile Include="FigoException.cs" />
     <Compile Include="FigoSession.cs" />
-    <Compile Include="Models\FigoAccount.cs" />
-    <Compile Include="Models\FigoAccountBalance.cs" />
-    <Compile Include="Models\FigoSynchronizationStatus.cs" />
-    <Compile Include="Models\FigoTransaction.cs" />
+    <Compile Include="internal\SyncToken.cs" />
+    <Compile Include="models\FigoAccount.cs" />
+    <Compile Include="models\FigoAccountBalance.cs" />
+    <Compile Include="models\FigoNotification.cs" />
+    <Compile Include="models\FigoSynchronizationStatus.cs" />
+    <Compile Include="models\FigoTransaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
   </ItemGroup>
