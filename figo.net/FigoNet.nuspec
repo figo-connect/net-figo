@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>Figo</id>
+    <version>$version$</version>
+    <title>Figo.net client library</title>
+    <authors>Stefan Richter</authors>
+    <owners>Stefan Richter</owners>
+    <description>.net client library for figo.io.</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright (C) figo GmbH 2014</copyright>
+    <tags></tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="6.0.3" />
+    </dependencies>
+  </metadata>
+</package>

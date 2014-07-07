@@ -1,0 +1,8 @@
+ConsoleDemo/bin/
+ConsoleDemo/obj/
+figo.net/bin/
+figo.net/obj/
+UnitTests/bin/
+UnitTests/obj/
+packages/
+*.suo
