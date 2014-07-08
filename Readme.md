@@ -3,7 +3,10 @@ figo.net [![Build Status](https://travis-ci.org/figo-connect/net-figo.png)](http
 
 .net bindings for the figo connect API: http://figo.io
 
-Simply add figo.net from NuGet.
+Simply add figo.net from [NuGet](https://www.nuget.org/packages/figo). In the Package Manager Console run the following command:
+```powershell
+PM> Install-Package figo
+```
 
 And just as easy to use:
 ```csharp
