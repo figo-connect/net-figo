@@ -4,5 +4,8 @@ figo.net/bin/
 figo.net/obj/
 UnitTests/bin/
 UnitTests/obj/
+WebDemo/bin/
+WebDemo/obj/
 packages/
 *.suo
+*.nupkg

@@ -1,0 +1,88 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<WebDemo.models.IndexModel>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>figo web banking</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- figo design -->
+    <link href="/Content/favicon.ico" rel="shortcut icon" />
+    <link href="/Content/banking.css" rel="stylesheet" media="screen" />
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">figo web banking</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li @(Model.CurrentAccount == null ? "class='active'" : "")><a href="/">Unified Inbox</a></li>
+                    @foreach(var item in Model.Accounts.Select((model, index) => new { index, model })) {
+                        <li @(Model.CurrentAccount != null && Model.CurrentAccount.AccountId == item.model.AccountId ? " class='active'" : "")><a href="/@item.model.AccountId">@item.model.Name</a></li>
+                    }
+                </ul>
+                <p class="navbar-text navbar-right">Signed in as <a href="/logout" class="navbar-link">@Model.User.Email</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" role="main">
+        <h1>@(Model.CurrentAccount == null ? "Unified Inbox" : Model.CurrentAccount.Name)</h1>
+        @if(Model.CurrentAccount != null) {
+            <div class="panel panel-default">
+                <div class="panel-heading">Account Details</div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">Owner: @Model.CurrentAccount.Owner</li>
+                        <li class="list-group-item">Account Number: @Model.CurrentAccount.AccountNumber</li>
+                        <li class="list-group-item">Bank Code: @Model.CurrentAccount.BankCode</li>
+                        <li class="list-group-item">IBAN: @Model.CurrentAccount.IBAN</li>
+                        <li class="list-group-item">Balance: @Model.CurrentAccountBalance.Balance @Model.CurrentAccount.Currency</li>
+                    </ul>
+                </div>
+            </div>
+        }
+
+        <table class="table table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Account Number</th>
+                    <th>Purpose</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model.Transactions.Select((model, index) => new { index, model })) {
+                    <tr>
+                        <td>@item.model.ValueDate</td>
+                        <td>@item.model.Name</td>
+                        <td>@item.model.AccountNumber</td>
+                        <td>@item.model.PurposeText</td>
+                        <td style="text-align: right; @(item.model.Amount < 0 ? "color: red;" : "")">@item.model.Amount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+</html>
