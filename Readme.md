@@ -39,6 +39,11 @@ class FigoExample {
 
 A more detailed documentation of the figo connect API can be found at http://docs.figo.io.
 
+Demos
+-----
+
+In this repository you can also have a look at a simple console and web demo in the folders ConsoleDemo and WebDemo respectivly. While the console demo simple accesses the figo API, implements the full OAuth flow.
+
 Building the NuGet package
 --------------------------
 
