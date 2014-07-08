@@ -1,4 +1,4 @@
-figo.net [![Build Status](https://travis-ci.org/figo-connect/net-figo.png)](https://travis-ci.org/figo-connect/net-figo)
+figo.net [![Build Status](https://travis-ci.org/figo-connect/net-figo.png)](https://travis-ci.org/figo-connect/net-figo) [![NuGet Version](http://img.shields.io/nuget/v/figo.svg?style=flat)](https://www.nuget.org/packages/figo/)
 ===========
 
 .net bindings for the figo connect API: http://figo.io
