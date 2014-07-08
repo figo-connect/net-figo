@@ -41,5 +41,5 @@ Building the NuGet package
 
 It might be neccessary to call nuget like this to build the package:
 ```
-nuget pack figo.net.csproj -Prop Platform=AnyCPU
+nuget pack figo.net.csproj -Prop Platform=AnyCPU -Prop Configuration=Release
 ```
