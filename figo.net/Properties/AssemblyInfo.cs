@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("figo.net")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("figo")]
+[assembly: AssemblyDescription(".net client library for figo.io")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("figo.net")]
+[assembly: AssemblyCompany("figo GmbH")]
+[assembly: AssemblyProduct("figo")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

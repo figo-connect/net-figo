@@ -35,3 +35,11 @@ class FigoExample {
 ```
 
 A more detailed documentation of the figo connect API can be found at http://docs.figo.io.
+
+Building the NuGet package
+--------------------------
+
+It might be neccessary to call nuget like this to build the package:
+```
+nuget pack figo.net.csproj -Prop Platform=AnyCPU
+```

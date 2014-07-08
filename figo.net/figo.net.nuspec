@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>https://github.com/figo-connect/net-figo</projectUrl>
+    <iconUrl>http://figo.me/wp-content/uploads/2012/03/favicon1.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>finance SDK</tags>
+  </metadata>
+</package>
