@@ -10,5 +10,9 @@ namespace figo {
                 return sr.ReadToEnd();
             }
         }
+
+        public static string ToBase64(this string data) {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(data));
+        }
     }
 }

@@ -35,15 +35,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FigoConnection.cs" />
     <Compile Include="FigoException.cs" />
     <Compile Include="FigoSession.cs" />
     <Compile Include="internal\SyncToken.cs" />
+    <Compile Include="internal\TokenRequest.cs" />
     <Compile Include="models\FigoAccount.cs" />
     <Compile Include="models\FigoAccountBalance.cs" />
     <Compile Include="models\FigoNotification.cs" />
     <Compile Include="models\FigoPayment.cs" />
     <Compile Include="models\FigoSynchronizationStatus.cs" />
     <Compile Include="models\FigoTransaction.cs" />
+    <Compile Include="models\FigoUser.cs" />
+    <Compile Include="models\TokenResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
   </ItemGroup>
