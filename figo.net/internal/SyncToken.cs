@@ -22,7 +22,7 @@ namespace figo {
     }
 
     [JsonObject]
-    class SyncTokenResponse {
+    class TaskTokenResponse {
         /// <summary>
         /// Task token
         /// </summary>

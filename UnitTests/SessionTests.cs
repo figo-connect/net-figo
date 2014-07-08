@@ -71,6 +71,7 @@ namespace UnitTests {
             Task<FigoNotification> task_add = sut.addNotification(notification);
             task_add.Wait();
             FigoNotification addedNotification = task_add.Result;
+            Assert.IsNotNull(addedNotification);
             Assert.IsNotNull(addedNotification.NotificationId);
             Assert.AreEqual("/rest/transactions", addedNotification.ObserveKey);
             Assert.AreEqual("http://figo.me/test", addedNotification.NotifyURI);
@@ -83,6 +84,7 @@ namespace UnitTests {
             Task<FigoNotification> task_get = sut.getNotification(addedNotification.NotificationId);
             task_get.Wait();
             FigoNotification updatedNotification = task_get.Result;
+            Assert.IsNotNull(updatedNotification);
 		    Assert.AreEqual(addedNotification.NotificationId, updatedNotification.NotificationId);
 		    Assert.AreEqual("/rest/transactions", updatedNotification.ObserveKey);
 		    Assert.AreEqual("http://figo.me/test", updatedNotification.NotifyURI);
@@ -95,5 +97,38 @@ namespace UnitTests {
             task_test.Wait();
             Assert.IsNull(task_test.Result);
 	    }
+
+        [TestMethod]
+        public void testCreateUpdateDeletePayment() {
+            FigoPayment payment = new FigoPayment { Type = "Transfer", AccountNumber = "4711951501", BankCode = "90090042", Name = "figo", Purpose = "Thanks for all the fish.", Amount = 0.89F };
+            Task<FigoPayment> task_add = sut.addPayment("A1.1", payment);
+            task_add.Wait();
+            FigoPayment addedPayment = task_add.Result;
+            Assert.IsNotNull(addedPayment);
+            Assert.IsNotNull(addedPayment.PaymentID);
+            Assert.AreEqual("A1.1", addedPayment.AccountID);
+            Assert.AreEqual("Demobank", addedPayment.BankName);
+            Assert.AreEqual(0.89F, addedPayment.Amount);
+
+            addedPayment.Amount = 2.39F;
+            Task<FigoPayment> task_update = sut.updatePayment(addedPayment);
+            task_update.Wait();
+
+            Task<FigoPayment> task_get = sut.getPayment(addedPayment.AccountID, addedPayment.PaymentID);
+            task_get.Wait();
+            FigoPayment updatedPayment = task_get.Result;
+            Assert.IsNotNull(updatedPayment);
+            Assert.AreEqual(addedPayment.PaymentID, updatedPayment.PaymentID);
+            Assert.AreEqual("A1.1", updatedPayment.AccountID);
+            Assert.AreEqual("Demobank", updatedPayment.BankName);
+            Assert.AreEqual(2.39F, updatedPayment.Amount);
+
+            Task<bool> task_delete = sut.removePayment(updatedPayment);
+            task_delete.Wait();
+
+            Task<FigoPayment> task_test = sut.getPayment(addedPayment.AccountID, addedPayment.PaymentID);
+            task_test.Wait();
+            Assert.IsNull(task_test.Result);
+        }
     }
 }
