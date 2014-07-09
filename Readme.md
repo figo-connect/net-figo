@@ -42,7 +42,7 @@ A more detailed documentation of the figo connect API can be found at http://doc
 Demos
 -----
 
-In this repository you can also have a look at a simple console and web demo in the folders ConsoleDemo and WebDemo respectivly. While the console demo simple accesses the figo API, implements the full OAuth flow.
+In this repository you can also have a look at a simple console and web demo in the folders ConsoleDemo and WebDemo respectively. While the console demo simply accesses the figo API, the web demo implements the full OAuth flow.
 
 Building the NuGet package
 --------------------------
