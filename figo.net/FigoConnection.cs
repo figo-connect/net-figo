@@ -8,7 +8,14 @@ using System.Threading.Tasks;
 
 namespace figo {
     public class FigoConnection {
-        private readonly string API_ENDPOINT = "https://api.figo.me";
+        /// <summary>
+        /// figo API endpoint to use. This should only be changed when using a custom figo deployment.
+        /// </summary>
+        private string _apiEndoint = "https://api.figo.me";
+        public string ApiEndpoint {
+            get { return _apiEndoint; }
+            set { _apiEndoint = value; }
+        }
 
         /// <summary>
         /// the OAuth Client ID as provided by your figo developer contact
@@ -25,6 +32,15 @@ namespace figo {
         /// </summary>
         public string RedirectUri { get; set; }
 
+        /// <summary>
+        /// The timeout for a API request
+        /// </summary>
+        private int _timeout = 5000;
+        public int Timeout {
+            get { return _timeout; }
+            set { _timeout = value; }
+        }
+
         #region Request Handling
         protected async Task<T> DoRequest<T>(string endpoint, string method = "GET", object body = null) {
             string request_body = null;
@@ -39,11 +55,13 @@ namespace figo {
         }
 
         protected async Task<String> DoRequest(string endpoint, string method = "GET", string body = null) {
-            WebRequest req = (WebRequest)WebRequest.Create(API_ENDPOINT + endpoint);
+            WebRequest req = (WebRequest)WebRequest.Create(ApiEndpoint + endpoint);
             req.Method = method;
             req.Headers["Authorization"] = "Basic " + (this.ClientId + ":" + this.ClientSecret).ToBase64();
-            if(req is HttpWebRequest)
+            if(req is HttpWebRequest) {
+                ((HttpWebRequest)req).ContinueTimeout = Timeout;
                 ((HttpWebRequest)req).Accept = "application/json";
+            }
 
             if(body != null) {
                 req.ContentType = "application/json";
@@ -97,7 +115,7 @@ namespace figo {
         /// <returns>the URL of the first page of the login process</returns>
         public String GetLoginUrl(string scope, string state) {
 	        StringBuilder sb = new StringBuilder();
-	        sb.Append(API_ENDPOINT);
+            sb.Append(ApiEndpoint);
 	        sb.Append("/auth/code?response_type=code&client_id=");
 	        sb.Append(WebUtility.UrlEncode(this.ClientId));
 	        sb.Append("&redirect_uri=");

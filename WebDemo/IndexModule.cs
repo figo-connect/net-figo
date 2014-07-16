@@ -15,7 +15,7 @@
                 if(Request.Session["figo_token"] == null) {
                     return Response.AsRedirect(_figoConnection.GetLoginUrl(null, "qweqwe"));
                 } else {
-                    figoSession = new FigoSession(Request.Session["figo_token"].ToString());
+                    figoSession = new FigoSession { AccessToken = Request.Session["figo_token"].ToString() };
                 }
                 
                 if(parameters.ContainsKey("id"))

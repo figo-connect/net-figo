@@ -11,16 +11,27 @@ using figo.models;
 namespace figo
 {
     public class FigoSession {
-        static readonly string API_ENDPOINT = "https://api.figo.me";
-
-        private string access_token = null;
+        /// <summary>
+        /// figo API endpoint to use. This should only be changed when using a custom figo deployment.
+        /// </summary>
+        private string _apiEndoint = "https://api.figo.me";
+        public string ApiEndpoint { 
+            get { return _apiEndoint; } 
+            set { _apiEndoint = value; }
+        }
 
         /// <summary>
-        /// Creates a FigoSession instance
+        /// The users access token used for authentication
         /// </summary>
-        /// <param name="access_token">access_token the access token to bind this session to a user</param>
-        public FigoSession(string access_token) {
-            this.access_token = access_token;
+        public string AccessToken { get; set; }
+
+        /// <summary>
+        /// The timeout for a API request
+        /// </summary>
+        private int _timeout = 5000;
+        public int Timeout {
+            get { return _timeout; }
+            set { _timeout = value; }
         }
 
         #region Request Handling
@@ -37,11 +48,13 @@ namespace figo
         }
 
         protected async Task<String> DoRequest(string endpoint, string method = "GET", string body = null) {
-            WebRequest req = (WebRequest)WebRequest.Create(API_ENDPOINT + endpoint);
+            WebRequest req = (WebRequest)WebRequest.Create(ApiEndpoint + endpoint);
             req.Method = method;
-            req.Headers["Authorization"] = "Bearer " + access_token;
-            if(req is HttpWebRequest)
+            req.Headers["Authorization"] = "Bearer " + AccessToken;
+            if(req is HttpWebRequest) {
+                ((HttpWebRequest)req).ContinueTimeout = Timeout;
                 ((HttpWebRequest)req).Accept = "application/json";
+            }
 
             if (body != null) {
                 req.ContentType = "application/json";
@@ -295,7 +308,7 @@ namespace figo
         /// <returns>the URL to be opened by the user</returns>
         public async Task<string> GetSyncTaskToken(String state, String redirect_url) {
 		    TaskTokenResponse response = await this.DoRequest<TaskTokenResponse>("/rest/sync", "POST", new SyncTokenRequest { State=state, RedirectURI=redirect_url});
-            return API_ENDPOINT + "/task/start?id=" + response.TaskToken;
+            return ApiEndpoint + "/task/start?id=" + response.TaskToken;
 	    }
         #endregion
 
@@ -411,7 +424,7 @@ namespace figo
         /// <returns>Updated payment</returns>
         public async Task<string> SubmitPayment(FigoPayment payment) {
             var response = await this.DoRequest<TaskTokenResponse>("/rest/accounts/" + payment.AccountId + "/payments/" + payment.PaymentId + "/submit", "POST");
-            return API_ENDPOINT + "/task/start?id=" + response.TaskToken;
+            return ApiEndpoint + "/task/start?id=" + response.TaskToken;
         }
 
         /// <summary>

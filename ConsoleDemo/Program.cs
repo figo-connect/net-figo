@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace figo.ConsoleDemo {
     class Program {
         static void Main(string[] args)  {
-            FigoSession session = new FigoSession("ASHWLIkouP2O6_bgA2wWReRhletgWKHYjLqDaqb0LFfamim9RjexTo22ujRIP_cjLiRiSyQXyt2kM1eXU2XLFZQ0Hro15HikJQT_eNeT_9XQ");
+            FigoSession session = new FigoSession { AccessToken = "ASHWLIkouP2O6_bgA2wWReRhletgWKHYjLqDaqb0LFfamim9RjexTo22ujRIP_cjLiRiSyQXyt2kM1eXU2XLFZQ0Hro15HikJQT_eNeT_9XQ" };
 
 		    // print out a list of accounts including its balance
             var task_accounts = session.GetAccounts();
