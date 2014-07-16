@@ -42,6 +42,7 @@
     <Compile Include="internal\TokenRequest.cs" />
     <Compile Include="models\FigoAccount.cs" />
     <Compile Include="models\FigoAccountBalance.cs" />
+    <Compile Include="models\FigoBank.cs" />
     <Compile Include="models\FigoNotification.cs" />
     <Compile Include="models\FigoPayment.cs" />
     <Compile Include="models\FigoSynchronizationStatus.cs" />

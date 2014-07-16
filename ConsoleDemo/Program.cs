@@ -25,7 +25,7 @@ namespace figo.ConsoleDemo {
             var task_transactions = session.GetTransactions("A1.2");
             task_transactions.Wait();
 		    foreach(FigoTransaction transaction in task_transactions.Result) {
-			    Console.WriteLine(transaction.PurposeText);
+			    Console.WriteLine(transaction.Purpose);
 		    }
         }
     }

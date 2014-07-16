@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Threading.Tasks;
+using figo.models;
 
 namespace figo
 {
@@ -85,8 +86,29 @@ namespace figo
         #endregion
 
         #region User
+        /// <summary>
+        /// Get the current figo Account
+        /// </summary>
+        /// <returns>User object for the current figo Account</returns>
         public async Task<FigoUser> GetUser() {
             return await DoRequest<FigoUser>("/rest/user");
+        }
+
+        /// <summary>
+        /// Modify the current figo Account
+        /// </summary>
+        /// <param name="user">modified user object to be saved</param>
+        /// <returns>User object for the updated figo Account</returns>
+        public async Task<FigoUser> UpdateUser(FigoUser user) {
+            return await DoRequest<FigoUser>("/rest/user", "PUT", user);
+        }
+
+        /// <summary>
+        /// Delete current figo Account
+        /// </summary>
+        public async Task<bool> RemoveUser() {
+            await DoRequest("/rest/user", "DELETE");
+            return true;
         }
         #endregion
 
@@ -97,10 +119,7 @@ namespace figo
         /// <returns>List of accounts</returns>
         public async Task<IList<FigoAccount>> GetAccounts() {
             var response = await this.DoRequest<FigoAccount.FigoAccountsResponse>("/rest/accounts");
-            if(response == null)
-                return null;
-            else
-                return response.Accounts;
+            return response == null ? null : response.Accounts;
 	    }
 
         /// <summary>
@@ -111,6 +130,32 @@ namespace figo
         public async Task<FigoAccount> GetAccount(String accountId) {
             return await this.DoRequest<FigoAccount>("/rest/accounts/" + accountId);
 	    }
+
+        /// <summary>
+        /// Modify an account
+        /// </summary>
+        /// <param name="account">the modified account to be saved</param>
+        /// <returns>Account object for the updated account returned by server</returns>
+        public async Task<FigoAccount> UpdateAccount(FigoAccount account) {
+            return await this.DoRequest<FigoAccount>("/rest/accounts/" + account.AccountId, "PUT", account);
+        }
+
+        /// <summary>
+        /// Remove an account
+        /// </summary>
+        /// <param name="account">account to be removed</param>
+        public async Task<bool> RemoveAccount(FigoAccount account) {
+            return await RemoveAccount(account.AccountId);
+        }
+
+        /// <summary>
+        /// Remove an account
+        /// </summary>
+        /// <param name="account">ID of the account to be removed</param>
+        public async Task<bool> RemoveAccount(String accountId) {
+            await this.DoRequest("/rest/accounts/" + accountId, "DELETE");
+            return true;
+        }
 
         /// <summary>
         /// Returns the balance details of the account with the specified ID
@@ -129,41 +174,106 @@ namespace figo
 	    public async Task<FigoAccountBalance> GetAccountBalance(FigoAccount account){
 		    return await GetAccountBalance(account.AccountId);
 	    }
+
+        /// <summary>
+        /// Modify balance or account limits
+        /// </summary>
+        /// <param name="accountId">ID of the account to be modified</param>
+        /// <param name="accountBalance">modified AccountBalance object to be saved</param>
+        /// <returns>AccountBalance object for the updated account as returned by the server</returns>
+        public async Task<FigoAccountBalance> UpdateAccountBalance(String accountId, FigoAccountBalance accountBalance) {
+            return await this.DoRequest<FigoAccountBalance>("/rest/accounts/" + accountId + "/balance", "PUT", accountBalance);
+        }
+
+        /// <summary>
+        /// Modify balance or account limits
+        /// </summary>
+        /// <param name="account">the account to be modified</param>
+        /// <param name="accountBalance">modified AccountBalance object to be saved</param>
+        /// <returns>AccountBalance object for the updated account as returned by the server</returns>
+        public async Task<FigoAccountBalance> UpdateAccountBalance(FigoAccount account, FigoAccountBalance accountBalance) {
+            return await UpdateAccountBalance(account.AccountId, accountBalance);
+        }
+        #endregion
+
+        #region Banks
+        /// <summary>
+        /// Get bank
+        /// </summary>
+        /// <param name="bankId">ID of the bank to be retrieved</param>
+        /// <returns>Bank object representing the bank to be retrieved</returns>
+        public async Task<FigoBank> GetBank(String bankId) {
+            return await this.DoRequest<FigoBank>("/rest/banks/" + bankId);
+        }
+
+        /// <summary>
+        /// Modify a bank
+        /// </summary>
+        /// <param name="bank">modified bank object to be saved</param>
+        /// <returns>Bank object for the updated bank</returns>
+        public async Task<FigoBank> UpdateBank(FigoBank bank) {
+            return await this.DoRequest<FigoBank>("/rest/banks/" + bank.BankId, "PUT", bank);
+        }
+
+        /// <summary>
+        /// Remove the stored PIN for a bank (if there was one)
+        /// </summary>
+        /// <param name="bank">bank whose pin should be removed</param>
+        public async Task<bool> RemoveBankPin(FigoBank bank) {
+            return await RemoveBankPin(bank.BankId);
+        }
+
+        /// <summary>
+        /// Remove the stored PIN for a bank (if there was one)
+        /// </summary>
+        /// <param name="bankId">ID of the bank whose pin should be removed</param>
+        public async Task<bool> RemoveBankPin(String bankId) {
+            await this.DoRequest("/rest/banks/" + bankId + "/remove_pin", "POST");
+            return true;
+        }
         #endregion
 
         #region Transactions
         /// <summary>
-        /// All transactions on all accounts of the user
+        /// All transactions of a specific account
         /// </summary>
+        /// <param name="account">Account whose balance is to be retrieved</param>
+        /// <param name="since">this parameter can either be a transaction ID or a date</param>
+        /// <param name="count">limit the number of returned transactions</param>
+        /// <param name="offset">which offset into the result set should be used to determin the first transaction to return (useful in combination with count)</param>
+        /// <param name="include_pending">this flag indicates whether pending transactions should be included in the response; pending transactions are always included as a complete set, regardless of the `since` parameter</param>
         /// <returns>List of transactions</returns>
-        public async Task<List<FigoTransaction>> GetTransactions() {
-            FigoTransaction.TransactionsResponse response = await this.DoRequest<FigoTransaction.TransactionsResponse>("/rest/transactions");
-		    if (response == null)
-    			return null;
-	    	else
-		    	return response.Transactions;
-	    }
+        public async Task<List<FigoTransaction>> GetTransactions(FigoAccount account, String since = null, int count = 1000, int offset = 0, bool include_pending = false) {
+            return await GetTransactions(account.AccountId, since, count, offset, include_pending);
+        }
 
         /// <summary>
         /// All transactions of a specific account
         /// </summary>
         /// <param name="accountId">ID of the account whose transactions are to be retrieved</param>
+        /// <param name="since">this parameter can either be a transaction ID or a date</param>
+        /// <param name="count">limit the number of returned transactions</param>
+        /// <param name="offset">which offset into the result set should be used to determin the first transaction to return (useful in combination with count)</param>
+        /// <param name="include_pending">this flag indicates whether pending transactions should be included in the response; pending transactions are always included as a complete set, regardless of the `since` parameter</param>
         /// <returns>List of transactions</returns>
-	    public async Task<List<FigoTransaction>> GetTransactions(String accountId) {
-            FigoTransaction.TransactionsResponse response = await this.DoRequest<FigoTransaction.TransactionsResponse>("/rest/accounts/" + accountId + "/transactions");
-		    if (response == null)
-			    return null;
-		    else
-			    return response.Transactions;
-	    }
+	    public async Task<List<FigoTransaction>> GetTransactions(String accountId = null, String since = null, int count = 1000, int offset = 0, bool include_pending = false) {
+            StringBuilder sb = new StringBuilder();
+            if (accountId == null)
+                sb.Append("/rest/transactions?count=");
+            else
+                sb.Append("/rest/accounts/" + accountId + "/transactions?count=");
+            sb.Append(count);
+            sb.Append("&offset=");
+            sb.Append(offset);
+            sb.Append("&include_pending=");
+            sb.Append(include_pending ? "1" : "0");
+            if(since != null) {
+                sb.Append("&since=");
+                sb.Append(WebUtility.UrlEncode(since));
+            }
 
-        /// <summary>
-        /// All transactions of a specific account
-        /// </summary>
-        /// <param name="account">Account whose balance is to be retrieved</param>
-        /// <returns>List of transactions</returns>
-	    public async Task<List<FigoTransaction>> GetTransactions(FigoAccount account) {
-		    return await GetTransactions(account.AccountId);
+            FigoTransaction.TransactionsResponse response = await this.DoRequest<FigoTransaction.TransactionsResponse>(sb.ToString());
+            return response == null ? null : response.Transactions;
 	    }
 
         /// <summary>
@@ -182,10 +292,10 @@ namespace figo
         /// </summary>
         /// <param name="state">Any kind of string that will be forwarded in the callback response message. It serves two purposes: The value is used to maintain state between this request and the callback, e.g. it might contain a session ID from your application. The value should also contain a random component, which your application checks to mitigate cross-site request forgery</param>
         /// <param name="redirect_url">At the end of the synchronization process a response will be sent to this callback URL</param>
-        /// <returns>task token</returns>
+        /// <returns>the URL to be opened by the user</returns>
         public async Task<string> GetSyncTaskToken(String state, String redirect_url) {
 		    TaskTokenResponse response = await this.DoRequest<TaskTokenResponse>("/rest/sync", "POST", new SyncTokenRequest { State=state, RedirectURI=redirect_url});
-		    return response.TaskToken;
+            return API_ENDPOINT + "/task/start?id=" + response.TaskToken;
 	    }
         #endregion
 
@@ -196,10 +306,7 @@ namespace figo
         /// <returns>List of notifications</returns>
 	    public async Task<List<FigoNotification>> GetNotifications() {
 		    FigoNotification.NotificationsResponse response = await this.DoRequest<FigoNotification.NotificationsResponse>("/rest/notifications");
-		    if (response == null)
-			    return null;
-		    else
-			    return response.Notifications;
+            return response == null ? null : response.Notifications;
 	    }
 
         /// <summary>
@@ -246,10 +353,7 @@ namespace figo
         /// <returns>List of payments</returns>
         public async Task<List<FigoPayment>> GetPayments() {
             FigoPayment.PaymentsResponse response = await this.DoRequest<FigoPayment.PaymentsResponse>("/rest/payments");
-            if(response == null)
-                return null;
-            else
-                return response.Payments;
+            return response == null ? null : response.Payments;
         }
 
         /// <summary>
@@ -259,10 +363,16 @@ namespace figo
         /// <returns>List of payments</returns>
         public async Task<List<FigoPayment>> GetPayments(string accountId) {
             FigoPayment.PaymentsResponse response = await this.DoRequest<FigoPayment.PaymentsResponse>("/rest/accounts/" + accountId + "/payments");
-            if(response == null)
-                return null;
-            else
-                return response.Payments;
+            return response == null ? null : response.Payments;
+        }
+
+        /// <summary>
+        /// All payments on the specified account of the user
+        /// </summary>
+        /// <param name="account">account for which to retrieve the payments</param>
+        /// <returns>List of payments</returns>
+        public async Task<List<FigoPayment>> GetPayments(FigoAccount account) {
+            return await GetPayments(account.AccountId);
         }
 
         /// <summary>
@@ -291,7 +401,7 @@ namespace figo
         /// <param name="payment">Payment with updated values</param>
         /// <returns>Updated payment</returns>
         public async Task<FigoPayment> UpdatePayment(FigoPayment payment) {
-            return await this.DoRequest<FigoPayment>("/rest/accounts/" + payment.AccountID + "/payments/" + payment.PaymentID, "PUT", payment);
+            return await this.DoRequest<FigoPayment>("/rest/accounts/" + payment.AccountId + "/payments/" + payment.PaymentId, "PUT", payment);
         }
 
         /// <summary>
@@ -300,8 +410,8 @@ namespace figo
         /// <param name="payment">Payment to be submitted</param>
         /// <returns>Updated payment</returns>
         public async Task<string> SubmitPayment(FigoPayment payment) {
-            var response = await this.DoRequest<TaskTokenResponse>("/rest/accounts/" + payment.AccountID + "/payments/" + payment.PaymentID + "/submit", "POST");
-            return response.TaskToken;
+            var response = await this.DoRequest<TaskTokenResponse>("/rest/accounts/" + payment.AccountId + "/payments/" + payment.PaymentId + "/submit", "POST");
+            return API_ENDPOINT + "/task/start?id=" + response.TaskToken;
         }
 
         /// <summary>
@@ -309,7 +419,7 @@ namespace figo
         /// </summary>
         /// <param name="payment">Payment to be removed</param>
         public async Task<bool> RemovePayment(FigoPayment payment) {
-            await this.DoRequest("/rest/accounts/" + payment.AccountID + "/payments/" + payment.PaymentID, "DELETE");
+            await this.DoRequest("/rest/accounts/" + payment.AccountId + "/payments/" + payment.PaymentId, "DELETE");
             return true;
         }
         #endregion

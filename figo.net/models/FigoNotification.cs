@@ -16,6 +16,7 @@ namespace figo {
         /// </summary>
         [JsonProperty("notification_id")]
         public String NotificationId { get; set; }
+        public bool ShouldSerializeNotificationId() { return false; }
 
         /// <summary>
         /// Notification key: see http://docs.figo.io/#notification-keys

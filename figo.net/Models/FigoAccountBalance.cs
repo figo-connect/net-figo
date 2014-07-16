@@ -16,12 +16,14 @@ namespace figo {
         /// </summary>
         [JsonProperty("balance")]
         public float Balance { get; set; }
+        public bool ShouldSerializeBalance() { return false; }
 
         /// <summary>
         /// Bank server timestamp of balance or null if the balance is not yet known.
         /// </summary>
         [JsonProperty("balance_date")]
         public DateTime BalanceDate { get; set; }
+        public bool ShouldSerializeBalanceDate() { return false; }
 
         /// <summary>
         /// Credit line

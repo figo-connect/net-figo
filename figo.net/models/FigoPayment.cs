@@ -15,13 +15,15 @@ namespace figo {
         /// Internal figo Connect payment ID
         /// </summary>
         [JsonProperty("payment_id")]
-        public String PaymentID { get; set; }
+        public String PaymentId { get; set; }
+        public bool ShouldSerializePaymentId() { return false; }
 
         /// <summary>
         /// Internal figo Connect account ID
         /// </summary>
         [JsonProperty("account_id")]
-        public String AccountID { get; set; }
+        public String AccountId { get; set; }
+        public bool ShouldSerializeAccountId() { return false; }
 
         /// <summary>
         /// Payment type
@@ -52,12 +54,21 @@ namespace figo {
         /// </summary>
         [JsonProperty("bank_name")]
         public string BankName { get; set; }
+        public bool ShouldSerializeBankName() { return false; }
 
         /// <summary>
         /// Icon of creditor or debitor bank
         /// </summary>
         [JsonProperty("bank_icon")]
         public string BankIcon { get; set; }
+        public bool ShouldSerializeBankIcon() { return false; }
+
+        /// <summary>
+        /// Icon of the creditor or debtor bank in other resolutions
+        /// </summary>
+        [JsonProperty("bank_additional_icons")]
+        public Dictionary<String, String> BankAdditionalIcons { get; set; }
+        public bool ShouldSerializeBankAdditionalIcons() { return false; }
 
         /// <summary>
         /// Order amount
@@ -78,34 +89,25 @@ namespace figo {
         public string Purpose { get; set; }
 
         /// <summary>
-        /// DTA text key
-        /// </summary>
-        [JsonProperty("text_key")]
-        public int TextKey { get; set; }
-
-        /// <summary>
-        /// DTA text key extension
-        /// </summary>
-        [JsonProperty("text_key_extension")]
-        public int TextkeyExtension { get; set; }
-
-        /// <summary>
         /// Timestamp of submission to the bank server
         /// </summary>
         [JsonProperty("submission_timestamp")]
-        public DateTime SubmissionTimestamp { get; set; }
+        public DateTime? SubmissionTimestamp { get; set; }
+        public bool ShouldSerializeSubmissionTimestamp() { return false; }
 
         /// <summary>
         /// Internal creation timestamp on the figo Connect server
         /// </summary>
         [JsonProperty("creation_timestamp")]
         public DateTime CreationTimestamp { get; set; }
+        public bool ShouldSerializeCreationTimestamp() { return false; }
 
         /// <summary>
         /// Internal modification timestamp on the figo Connect server
         /// </summary>
         [JsonProperty("modification_timestamp")]
         public DateTime ModificationTimestmap { get; set; }
+        public bool ShouldSerializeNotificationTimestamp() { return false; }
 
         /// <summary>
         /// Helper type to match actual response from figo API
