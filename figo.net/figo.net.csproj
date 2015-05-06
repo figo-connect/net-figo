@@ -45,6 +45,7 @@
     <Compile Include="models\FigoBank.cs" />
     <Compile Include="models\FigoNotification.cs" />
     <Compile Include="models\FigoPayment.cs" />
+    <Compile Include="models\FigoSecurity.cs" />
     <Compile Include="models\FigoSynchronizationStatus.cs" />
     <Compile Include="models\FigoTransaction.cs" />
     <Compile Include="models\FigoUser.cs" />
