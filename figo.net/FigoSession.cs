@@ -29,68 +29,49 @@ namespace figo
         /// The timeout for a API request
         /// </summary>
         private int _timeout = 5000;
-        public int Timeout
-        {
+        public int Timeout {
             get { return _timeout; }
             set { _timeout = value; }
         }
 
         #region Request Handling
-        protected async Task<T> DoRequest<T>(string endpoint, string method = "GET", object body = null)
-        {
+        protected async Task<T> DoRequest<T>(string endpoint, string method = "GET", object body = null) {
             string request_body = null;
-            if (body != null)
+            if(body != null)
                 request_body = JsonConvert.SerializeObject(body, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
             string response_body = await DoRequest(endpoint, method, request_body);
-            if (response_body == null)
+            if(response_body == null)
                 return default(T);
-
-
-            //WORKAROUND für PurchasePrice Bug bei Securites
-            if (endpoint.Contains("/securities"))
-            {
-                response_body = response_body.Replace("\"purchase_price\": 2", "\"purchase_price\": ");
-            }
-
-
-            return JsonConvert.DeserializeObject<T>(response_body);
+            else
+                return JsonConvert.DeserializeObject<T>(response_body);
         }
 
-        protected async Task<String> DoRequest(string endpoint, string method = "GET", string body = null)
-        {
+        protected async Task<String> DoRequest(string endpoint, string method = "GET", string body = null) {
             WebRequest req = (WebRequest)WebRequest.Create(ApiEndpoint + endpoint);
             req.Method = method;
             req.Headers["Authorization"] = "Bearer " + AccessToken;
-            if (req is HttpWebRequest)
-            {
+            if(req is HttpWebRequest) {
                 ((HttpWebRequest)req).ContinueTimeout = Timeout;
                 ((HttpWebRequest)req).Accept = "application/json";
             }
 
-            if (body != null)
-            {
+            if (body != null) {
                 req.ContentType = "application/json";
 
-                using (var request_stream = await req.GetRequestStreamAsync())
-                {
+                using(var request_stream = await req.GetRequestStreamAsync()) {
                     byte[] bytes = Encoding.UTF8.GetBytes(body);
                     request_stream.Write(bytes, 0, bytes.Length);
                 }
             }
 
             string result = null;
-            try
-            {
-                using (WebResponse resp = await req.GetResponseAsync())
-                {
+            try {
+                using (WebResponse resp = await req.GetResponseAsync()) {
                     result = resp.GetResponseAsString();
                 }
-            }
-            catch (WebException wexc)
-            {
-                if (wexc.Response != null)
-                {
+            } catch (WebException wexc) {
+                if (wexc.Response != null) {
                     string json_error = wexc.Response.GetResponseAsString();
 
                     HttpStatusCode status_code = HttpStatusCode.BadRequest;
@@ -307,6 +288,52 @@ namespace figo
             FigoTransaction.TransactionsResponse response = await this.DoRequest<FigoTransaction.TransactionsResponse>(sb.ToString());
             return response == null ? null : response.Transactions;
 	    }
+
+        /// <summary>
+        /// All securities of a specific account
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="since"></param>
+        /// <param name="count"></param>
+        /// <param name="offset"></param>
+        /// <param name="include_pending"></param>
+        /// <returns></returns>
+        public async Task<List<FigoSecurity>> GetSecurities(FigoAccount account, String since = null, int count = 1000, int offset = 0, bool include_pending = false)
+        {
+            return await GetSecurities(account.AccountId, since, count, offset, include_pending);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <param name="since"></param>
+        /// <param name="count"></param>
+        /// <param name="offset"></param>
+        /// <param name="include_pending"></param>
+        /// <returns></returns>
+        private async Task<List<FigoSecurity>> GetSecurities(String accountId = null, String since = null, int count = 1000, int offset = 0, bool include_pending = false)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (accountId == null)
+                sb.Append("/rest/securities?count=");
+            else
+                sb.Append("/rest/accounts/" + accountId + "/securities?count=");
+            sb.Append(count);
+            sb.Append("&offset=");
+            sb.Append(offset);
+            sb.Append("&include_pending=");
+            sb.Append(include_pending ? "1" : "0");
+            if (since != null)
+            {
+                sb.Append("&since=");
+                sb.Append(WebUtility.UrlEncode(since));
+            }
+
+            FigoSecurity.SecurityResponse response = await DoRequest<FigoSecurity.SecurityResponse>(sb.ToString());
+            return response == null ? null : response.Securities;
+        }
+
 
         /// <summary>
         /// Retrieve a specific transaction by ID
