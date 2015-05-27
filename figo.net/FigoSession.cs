@@ -290,6 +290,52 @@ namespace figo
 	    }
 
         /// <summary>
+        /// All securities of a specific account
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="since"></param>
+        /// <param name="count"></param>
+        /// <param name="offset"></param>
+        /// <param name="include_pending"></param>
+        /// <returns></returns>
+        public async Task<List<FigoSecurity>> GetSecurities(FigoAccount account, String since = null, int count = 1000, int offset = 0, bool include_pending = false)
+        {
+            return await GetSecurities(account.AccountId, since, count, offset, include_pending);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <param name="since"></param>
+        /// <param name="count"></param>
+        /// <param name="offset"></param>
+        /// <param name="include_pending"></param>
+        /// <returns></returns>
+        private async Task<List<FigoSecurity>> GetSecurities(String accountId = null, String since = null, int count = 1000, int offset = 0, bool include_pending = false)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (accountId == null)
+                sb.Append("/rest/securities?count=");
+            else
+                sb.Append("/rest/accounts/" + accountId + "/securities?count=");
+            sb.Append(count);
+            sb.Append("&offset=");
+            sb.Append(offset);
+            sb.Append("&include_pending=");
+            sb.Append(include_pending ? "1" : "0");
+            if (since != null)
+            {
+                sb.Append("&since=");
+                sb.Append(WebUtility.UrlEncode(since));
+            }
+
+            FigoSecurity.SecurityResponse response = await DoRequest<FigoSecurity.SecurityResponse>(sb.ToString());
+            return response == null ? null : response.Securities;
+        }
+
+
+        /// <summary>
         /// Retrieve a specific transaction by ID
         /// </summary>
         /// <param name="transactionId">transactionId the figo ID of the specific transaction</param>
