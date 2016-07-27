@@ -83,7 +83,7 @@ namespace figo
                         return json_error;
                     } else if((int)status_code == 400) {
                         FigoException.ErrorResponse error_response = JsonConvert.DeserializeObject<FigoException.ErrorResponse>(json_error);
-			            throw new FigoException(error_response.Error, error_response.ErrorDescription);
+			            throw new FigoException(error_response.Error.Code.ToString(), error_response.Error.Description);
                     } else if((int)status_code == 401) {
 			            throw new FigoException("access_denied", "Access Denied");
                     } else if((int)status_code == 404) {
