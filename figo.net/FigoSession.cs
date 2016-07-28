@@ -7,6 +7,7 @@ using System.Text;
 using System.Net;
 using System.Threading.Tasks;
 using figo.models;
+using System.Net.Http;
 
 namespace figo
 {
@@ -19,6 +20,10 @@ namespace figo
             get { return _apiEndoint; } 
             set { _apiEndoint = value; }
         }
+        /// <summary>
+        /// action to invoke to modify request, e.g. for assigning ServerCertificateValidationCallback
+        /// </summary>
+        public Action<HttpWebRequest> OnRequestInitialize { get; set; }
 
         /// <summary>
         /// The users access token used for authentication
@@ -48,14 +53,12 @@ namespace figo
         }
 
         protected async Task<String> DoRequest(string endpoint, string method = "GET", string body = null) {
-            WebRequest req = (WebRequest)WebRequest.Create(ApiEndpoint + endpoint);
+            HttpWebRequest req = WebRequest.CreateHttp(ApiEndpoint + endpoint);
             req.Method = method;
             req.Headers["Authorization"] = "Bearer " + AccessToken;
-            if(req is HttpWebRequest) {
-                ((HttpWebRequest)req).ContinueTimeout = Timeout;
-                ((HttpWebRequest)req).Accept = "application/json";
-            }
-
+            req.ContinueTimeout = Timeout;
+            req.Accept = "application/json";
+            OnRequestInitialize?.Invoke(req);
             if (body != null) {
                 req.ContentType = "application/json";
 
