@@ -56,21 +56,21 @@ namespace figo {
         /// <summary>
         /// This flag indicates whether the figo Account plan is free or premium
         /// </summary>
-        [JsonProperty("premium")]
+        [Obsolete("Deprecated.", true)]
         public bool IsPremium { get; set; }
         public bool ShouldSerializeIsPremium() { return false; }
 
         /// <summary>
         /// Timestamp of premium figo Account expiry
         /// </summary>
-        [JsonProperty("premium_expires_on")]
+        [Obsolete("Deprecated.", true)]
         public DateTime PremiumExpiresOn { get; set; }
         public bool ShouldSerializePremiumExpiresOn() { return false; }
 
         /// <summary>
         /// Provider for premium subscription or Null of no subscription is active
         /// </summary>
-        [JsonProperty("premium_subscription")]
+        [Obsolete("Deprecated.", true)]
         public String PremiumSubscription { get; set; }
         public bool ShouldSerializePremiumSubscription() { return false; }
 
