@@ -7,10 +7,10 @@
     <authors>$author$</authors>
     <owners>$author$</owners>
     <projectUrl>https://github.com/figo-connect/net-figo</projectUrl>
-    <iconUrl>http://figo.me/wp-content/uploads/2012/03/favicon1.ico</iconUrl>
+    <iconUrl>https://www.figo.io/app/themes/figo/favicon-32x32.png?v1</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <copyright>Copyright 2014</copyright>
+    <copyright>Copyright 2016</copyright>
     <tags>finance SDK</tags>
   </metadata>
 </package>
