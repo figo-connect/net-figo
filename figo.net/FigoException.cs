@@ -15,7 +15,7 @@ namespace figo {
             this.ErrorCode = error_code;
         }
 
-        public FigoException(ErrorResponse response) : this(response.Error, response.ErrorDescription) {
+        public FigoException(ErrorResponse response) : this(response.Error.Code.ToString(), response.Error.Description) {
         }
 
         public string ErrorCode {
@@ -24,12 +24,34 @@ namespace figo {
         }
 
         [JsonObject]
+        public class ErrorData
+        {
+            [JsonProperty("code")]
+            public Int32 Code { get; set; }
+
+            [JsonProperty("data")]
+            public Object Data { get; set; }
+
+            [JsonProperty("description")]
+            public String Description { get; set; }
+
+            [JsonProperty("group")]
+            public String Group { get; set; }
+
+            [JsonProperty("message")]
+            public String Message { get; set; }
+
+            [JsonProperty("name")]
+            public String Name { get; set; }
+        }
+
+        [JsonObject]
         public class ErrorResponse {
             [JsonProperty("error")]
-            public String Error { get; set; }
+            public ErrorData Error { get; set; }
 
-            [JsonProperty("error_description")]
-            public String ErrorDescription { get; set; }
+            [JsonProperty("status")]
+            public Int32 Status { get; set; }
         }
     }
 }
