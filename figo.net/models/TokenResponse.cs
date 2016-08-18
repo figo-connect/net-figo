@@ -24,7 +24,7 @@ namespace figo {
         /// The remaining live time of the access token in seconds
         /// </summary>
         [JsonProperty("expires_in")]
-        public int ExpiresIn { get; set; }
+        public decimal ExpiresIn { get; set; }
 
         /// <summary>
         /// A space delimited set of requested permissions
