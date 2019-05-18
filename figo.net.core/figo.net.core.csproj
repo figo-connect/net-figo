@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\figo.net\ExtensionMethods.cs" Link="ExtensionMethods.cs" />
+    <Compile Include="..\figo.net\FigoConnection.cs" Link="FigoConnection.cs" />
+    <Compile Include="..\figo.net\FigoException.cs" Link="FigoException.cs" />
+    <Compile Include="..\figo.net\FigoSession.cs" Link="FigoSession.cs" />
+    <Compile Include="..\figo.net\internal\SyncToken.cs" Link="internal\SyncToken.cs" />
+    <Compile Include="..\figo.net\internal\TokenRequest.cs" Link="internal\TokenRequest.cs" />
+    <Compile Include="..\figo.net\Models\FigoAccount.cs" Link="Model\FigoAccount.cs" />
+    <Compile Include="..\figo.net\Models\FigoAccountBalance.cs" Link="Model\FigoAccountBalance.cs" />
+    <Compile Include="..\figo.net\Models\FigoBank.cs" Link="Model\FigoBank.cs" />
+    <Compile Include="..\figo.net\Models\FigoNotification.cs" Link="Model\FigoNotification.cs" />
+    <Compile Include="..\figo.net\Models\FigoPayment.cs" Link="Model\FigoPayment.cs" />
+    <Compile Include="..\figo.net\Models\FigoSecurity.cs" Link="Model\FigoSecurity.cs" />
+    <Compile Include="..\figo.net\Models\FigoSynchronizationStatus.cs" Link="Model\FigoSynchronizationStatus.cs" />
+    <Compile Include="..\figo.net\Models\FigoTransaction.cs" Link="Model\FigoTransaction.cs" />
+    <Compile Include="..\figo.net\Models\FigoUser.cs" Link="Model\FigoUser.cs" />
+    <Compile Include="..\figo.net\Models\TokenResponse.cs" Link="Model\TokenResponse.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="internal\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+</Project>
